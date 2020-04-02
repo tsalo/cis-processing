@@ -6,7 +6,7 @@ import os.path as op
 
 import pandas as pd
 from dateutil import parser
-from bids.grabbids import BIDSLayout
+from bids.layout import BIDSLayout
 
 
 def anon_acqtimes(dset_dir):
@@ -27,7 +27,7 @@ def anon_acqtimes(dset_dir):
     """
     bl_dt = parser.parse('1800-01-01')
 
-    layout = BIDSLayout(dset_dir)
+    layout = BIDSLayout(dset_dir, validate=False)
     subjects = layout.get_subjects()
     sessions = sorted(layout.get_sessions())
 
@@ -42,7 +42,7 @@ def anon_acqtimes(dset_dir):
             acq_times = df['acq_time'].apply(parser.parse)
             acq_times = (acq_times - diff).astype(str)
             df['acq_time'] = acq_times
-            # df.to_csv(scans_file, sep='\t', index=False)
+            df.to_csv(scans_file, sep='\t', index=False)
         else:
             # Separated from dataset sessions in case subject missed some
             sub_ses = sorted(layout.get_sessions(subject=sub))
@@ -60,4 +60,4 @@ def anon_acqtimes(dset_dir):
                 acq_times = df['acq_time'].apply(parser.parse)
                 acq_times = (acq_times - diff).astype(str)
                 df['acq_time'] = acq_times
-                # df.to_csv(scans_file, sep='\t', index=False)
+                df.to_csv(scans_file, sep='\t', index=False)

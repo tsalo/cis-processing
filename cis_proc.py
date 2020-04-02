@@ -270,7 +270,10 @@ def main(argv=None):
         for tmp_task in config_options['mriqc_options']['func']['task'].keys():
             print(op.join(scratch_bids_dir, 'sub-{sub}'.format(sub=args.sub), 'ses-{ses}'.format(ses=args.ses), 'func/sub-{sub}_ses-{ses}_task-{task}_run-01_bold.json'.format(sub=args.sub, ses=args.ses, task=tmp_task)))
             if args.ses:
-                run_mriqc = op.isfile(op.join(scratch_bids_dir, 'sub-{sub}'.format(sub=args.sub), 'ses-{ses}'.format(ses=args.ses), 'func/sub-{sub}_ses-{ses}_task-{task}_run-01_bold.json'.format(sub=args.sub, ses=args.ses, task=tmp_task)))
+                run_mriqc = op.isfile(op.join(
+                    scratch_bids_dir,
+                    'sub-{sub}/ses-{ses}/func/sub-{sub}_ses-{ses}_'
+                    'task-{task}_run-01_bold.json'.format(sub=args.sub, ses=args.ses, task=tmp_task)))
 
             else:
                 run_mriqc = op.isfile(op.join(scratch_bids_dir, 'sub-{sub}'.format(sub=args.sub),
