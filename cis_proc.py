@@ -108,12 +108,16 @@ def main(tar_file, bids_dir, config, sub, ses=None, work_dir=None, n_procs=1):
     # Additional checks and copying for heuristic file
     heuristic = config_options['heuristic']
 
-    if not heuristic.startswith('/'):
-        heuristic = op.join(op.dirname(bids_dir), heuristic)
+    # Heuristic may be file (absolute or relative path) or heudiconv builtin
+    # Use existence of file extension to determine if builtin or file
+    if op.splitext(heuristic)[1]:
+        if not heuristic.startswith('/'):
+            heuristic = op.join(op.dirname(bids_dir), heuristic)
 
-    if not op.isfile(heuristic):
-        raise ValueError('Heuristic file specified in config files must be '
-                         'an existing file.')
+        if not op.isfile(heuristic):
+            raise ValueError('Heuristic file specified in config files must be '
+                             'an existing file.')
+
     if not op.isfile(bidsifier_file):
         raise ValueError('BIDSifier image specified in config files must be '
                          'an existing file.')
@@ -128,7 +132,8 @@ def main(tar_file, bids_dir, config, sub, ses=None, work_dir=None, n_procs=1):
     if not op.isdir(bids_dir):
         os.makedirs(bids_dir)
 
-    shutil.copyfile(heuristic, op.join(scan_work_dir, 'heuristic.py'))
+    scratch_heuristic = op.join(scan_work_dir, 'heuristic.py')
+    shutil.copyfile(heuristic, scratch_heuristic)
 
     # Copy singularity images to scratch
     scratch_bidsifier = op.join(scan_work_dir, op.basename(bidsifier_file))
@@ -157,7 +162,7 @@ def main(tar_file, bids_dir, config, sub, ses=None, work_dir=None, n_procs=1):
     cmd = ('{sing} -d {work} --heuristic {heur} --sub {sub} '
            '--ses {ses} -o {outdir}'.format(
                sing=scratch_bidsifier, work=work_tar_file,
-               heur=op.join(scan_work_dir, 'heuristic.py'),
+               heur=scratch_heuristic,
                sub=sub, ses=ses, outdir=op.join(scan_work_dir, 'bids')))
     run(cmd)
 
