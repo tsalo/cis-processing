@@ -75,5 +75,5 @@ def merge_datasets(scratch_bids_dir, bids_dir, project_name, sub, ses=None):
     else:
         tmp_df_headers = list(sub_scans_df)
         sub_scans_df.to_csv(
-            master_scans_file, sep='\t', line_terminator='\n', 
+            master_scans_file, sep='\t', line_terminator='\n',
             index=False, columns=tmp_df_headers)
